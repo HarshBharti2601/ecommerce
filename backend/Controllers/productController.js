@@ -1,5 +1,5 @@
 const Product = require("../models/productModel");
-
+const ErrorHandler=require("../utils/errorhandler");
 
 
 
@@ -41,4 +41,31 @@ exports.getAllProducts=async(req,res)=>{
         product
     })
  }  
+};
+exports.deleteproduct=async(req,res,next)=>{
+    const product=await product.findById(req.params.id);
+
+    if(!product){
+        return res.status(500).json({
+            success:false,
+            message:"product not found" 
+        })}
+
+    await product.remove();
+    res.status(200).json({
+        success:true,
+        message:"Product Deleted successfully" 
+    })
+};
+exports.getproduct=async(req,res,next)=>{
+    const product=await product.findById(req.params.id);
+
+    if(!product){
+        return next(new ErrorHandler("product not found",404));
+    }
+   
+    res.status(200).json({
+        success:true,
+        product
+    });
 };
