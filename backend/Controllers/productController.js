@@ -18,12 +18,16 @@ exports.createproduct=catchasyncerror(async(req,res,next)=>{
 
 exports.getAllProducts=catchasyncerror(async(req,res)=>{
 
-   const apiFeature =new  ApiFeatures(Product.find(),req.query);
+    const resultPerPage = 5;
+    const productCount =await Product.counntDocuments();
+
+   const apiFeature =new  ApiFeatures(Product.find(),req.query).search().filter().pagination(resultPerPage);
   const products=await Product.find();
 
     res.status(200).json({
         success:true,
-        products
+        products,
+        PproductCount
     })});
 
  exports.updateProduct=catchasyncerror(async(req,res,next)=>{
