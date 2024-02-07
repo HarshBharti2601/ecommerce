@@ -5,8 +5,8 @@ const {isAuntheticatedUser,authorizeroles}=require("../middleware/auth");
 const router=express.Router();
 
 router.route("/products").get(getAllProducts);
-router.route("/products/new").post(isAuntheticatedUser,authorizeroles("admin"),createproduct);
-router.route("/products/:id").delete(isAuntheticatedUser,authorizeroles("admin"),deleteproduct).get(getproduct);
+router.route("/admin/products/new").post(isAuntheticatedUser,authorizeroles("admin"),createproduct);
+router.route("/admin/products/:ids").delete(isAuntheticatedUser,authorizeroles("admin"),deleteproduct).get(getproduct);
 
 router.put("/products/:id",isAuntheticatedUser,authorizeroles("admin"),(req,res)=>{
     const productId=req.params.id;

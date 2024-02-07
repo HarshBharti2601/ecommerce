@@ -129,4 +129,75 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
         })
      });
      
+     exports.getUserDetails = catchasyncerror(async(req,res,next)=>{
+
+
+        const user = await User.findById(req.user.id);
+
+        res.status(200).json({
+            success:true,
+            user
+        })
+     })
      
+     exports.updateUserPassword = catchasyncerror(async(req,res,next)=>{
+
+
+        const user = await User.findById(req.user.id).select("+password");
+
+        const isPasswordMatched = user.comparePassword(req.body.oldPassword);
+
+        if(!isPasswordMatched ){
+            return next(new ErrorHandler("Old password is incorrect",400)); 
+         }
+
+         if(req.body.newPassword  !== req.body.confirmPassword){
+            return next(new ErrorHandler("password does not match",400));
+         }
+
+         user.password=req.body.newPassword;
+
+         await user.save();
+
+         sendToken(user,200,res);
+
+        
+     })
+     exports.updateUserProfile = catchasyncerror(async(req,res,next)=>{
+
+
+        const newUserData={
+            name:req.body.name,
+            email:req.body.email,
+        }
+
+
+        const user= await User.findByIdAndUpdate(req.user.id,newUserData,{
+           new:true,
+           runValidators:true,
+           useFindAndModify:false, 
+        });
+
+        res.status(200).json({
+            success:true,
+        });
+
+        
+
+        
+     });
+
+     exports.getAllUser = catchasyncerror(async(req,res,next)=>{
+        const users = await User.findById(req.params.id);
+
+       if(!users){
+        return next(new ErrorHandler(`User does not exists with id: ${req.params.id}`))
+       }
+
+
+        res.status(200).json({
+            success:true,
+            users,
+     })
+     })
+   
