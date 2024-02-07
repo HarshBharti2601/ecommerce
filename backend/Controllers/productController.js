@@ -70,35 +70,53 @@ exports.getproduct=catchasyncerror(async(req,res,next)=>{
         product
     });
 });
-exports.createProductReview =catchasyncerror(async(req,res,next)=>{
-   
-    const {rating,comment,productId} = req.body;
-   
-   
-    const review ={
-        user:req.user.id,
-        name:req.user.name,
-        rating:Number(rating),
-        comment,
-    };
 
-    const product = await Product.findById(productId);
-     
-    const isReviewed = product.reviews.find(rev=>rev.user.toString()===req.user._id.toString())
-    if(isReviewed){
-       product.reviews.forEach(rev=>{
-        if(rev=>rev.user.toString()===req.user._id.toString()){
-            rev.rating=rating,
-            rev.comment=comment
-        }
-       })
+exports.getProductReviews = catchasyncerror(async(req,res,next)=>{
+
+      const product =Product.findById(req.query.id);
+
+      if(!product){
+        return next(new ErrorHandler("Product not found",404));
+      }
+
+      res.status(200).json({
+        success:true,
+        reviews:product.reviews,
+      });
+
+});
+exports.deleteReview = catchasyncerror(async(req,res,next)=>{
+
+    const product = Product.findById(req.query.id);
+
+    if(!product){
+        return next(new ErrorHandler("Product not found",404));
     }
-    else{
-        product.reviews.push(review);
-        product.numofReviews=product.reviews.length
-    }
-    let avg=0;
-    product.ratings = product.reviews.forEach(rev=>{
-        avg+=rev.rating; 
-    })
-})
+
+    const reviews = product.reviews.filter(rev=>rev._id.toString()!==req.query.id.toString());
+    let sum=0;
+    
+         reviews.forEach(rev=>{
+            sum+=rev.rating; 
+            
+        })
+    
+        const ratings = sum/reviews.length;
+
+        const numofReviews = reviews.length;
+
+        await product.findByIdAndUpdate(req.query.productid,{
+            reviews,
+            ratings,
+            numofReviews,
+        },{
+            new:true,
+            runValidators:true,
+            useFindAndModify:false
+        })
+
+    res.status(200).json({
+        success:true,
+
+    });
+});

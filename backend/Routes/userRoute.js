@@ -31,4 +31,6 @@ router.route("/admin/users").get(isAuthenticatedUser,authorizeroles("admin"),get
 
 router.route("/admin/user/:id").get(isAuthenticatedUser,authorizeroles("admin"),getSingleUser).put(isAuthenticatedUser,authorizeroles("admin"),updateUserRole);
 
+router.route("/review").put(isAuntheticatedUser,createProductReview);
+
 module.exports=router;

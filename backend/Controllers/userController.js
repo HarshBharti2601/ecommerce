@@ -1,6 +1,7 @@
 const ErrorHandler=require("../utils/errorhandler");
 const catchasyncerror=require("../middleware/catchasyncerror");
 const User=require("../models/usermodel");
+const Product = require("../models/productModel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail=require("../utils/sendemail");
 
@@ -242,5 +243,46 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
             success:true,
             user,
      })
-     })
+     });
+     exports.createProductReview =catchasyncerror(async(req,res,next)=>{
    
+        const {rating,comment,productId} = req.body;
+       
+       
+        const review ={
+            user:req.user.id,
+            name:req.user.name,
+            rating:Number(rating),
+            comment,
+        };
+    
+        const product = await Product.findById(productId);
+         
+        const isReviewed = product.reviews.find(rev=>rev.user.toString()===req.user._id.toString())
+        if(isReviewed){
+           product.reviews.forEach(rev=>{
+            if(rev=>rev.user.toString()===req.user._id.toString()){
+                rev.rating=rating,
+                rev.comment=comment
+            }
+           })
+        }
+        else{
+            product.reviews.push(review);
+            product.numofReviews=product.reviews.length
+        }
+        let sum=0;
+    
+         product.reviews.forEach(rev=>{
+            sum+=rev.rating; 
+            
+        })
+    
+        product.ratings = sum/product.reviews.length;
+    
+        await product.save({validateBeforeSave:false});
+    
+        res.status(200).json({
+           success:true 
+        })
+    });
