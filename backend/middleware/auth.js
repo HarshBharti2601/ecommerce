@@ -10,7 +10,7 @@ exports.isAuthenticatedUser=catchasyncerror(async(req,res,next)=>{
     const {token}=req.cookies;
 
     if(!token){
-        return next(new ErrorHandler("Please login to "))
+        return next(new ErrorHandler("Please login to the page"))
     }
   const decodedData=jwt.verify(token,process.env.JWT_SECRET)
 
