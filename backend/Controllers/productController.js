@@ -70,3 +70,35 @@ exports.getproduct=catchasyncerror(async(req,res,next)=>{
         product
     });
 });
+exports.createProductReview =catchasyncerror(async(req,res,next)=>{
+   
+    const {rating,comment,productId} = req.body;
+   
+   
+    const review ={
+        user:req.user.id,
+        name:req.user.name,
+        rating:Number(rating),
+        comment,
+    };
+
+    const product = await Product.findById(productId);
+     
+    const isReviewed = product.reviews.find(rev=>rev.user.toString()===req.user._id.toString())
+    if(isReviewed){
+       product.reviews.forEach(rev=>{
+        if(rev=>rev.user.toString()===req.user._id.toString()){
+            rev.rating=rating,
+            rev.comment=comment
+        }
+       })
+    }
+    else{
+        product.reviews.push(review);
+        product.numofReviews=product.reviews.length
+    }
+    let avg=0;
+    product.ratings = product.reviews.forEach(rev=>{
+        avg+=rev.rating; 
+    })
+})

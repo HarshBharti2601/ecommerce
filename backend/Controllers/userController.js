@@ -169,6 +169,7 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
         const newUserData={
             name:req.body.name,
             email:req.body.email,
+            
         }
 
 
@@ -180,24 +181,66 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
 
         res.status(200).json({
             success:true,
+            user
         });
+    })
+        exports.updateUserRole = catchasyncerror(async(req,res,next)=>{
+
+
+            const newUserData={
+                name:req.body.name,
+                email:req.body.email,
+                role:req.body.role
+            }
+    
+    
+            const user= await User.findByIdAndUpdate(req.user.id,newUserData);
+
+            if(!user){
+                return next(new ErrorHandler(`user does not exist with id : ${req.params.id}`))
+            }
+    
+            res.status(200).json({
+                success:true,
+            });
 
         
 
         
      });
+     
+     exports.deleteUser = catchasyncerror(async(req,res,next)=>{
 
-     exports.getAllUser = catchasyncerror(async(req,res,next)=>{
-        const users = await User.findById(req.params.id);
 
-       if(!users){
+        
+
+
+        const user= await User.findById(req.params.id);
+        if(!user){
+            return next (new ErrorHandler(`Usser does not exist with id :${req.params.id}`))
+        };
+        await user.remove();
+
+        res.status(200).json({
+            success:true,
+            message:"user deleted"
+        })
+
+    });
+
+
+
+     exports.getSingleUser = catchasyncerror(async(req,res,next)=>{
+        const user = await User.findById(req.params.id);
+
+       if(!user){
         return next(new ErrorHandler(`User does not exists with id: ${req.params.id}`))
        }
 
 
         res.status(200).json({
             success:true,
-            users,
+            user,
      })
      })
    
