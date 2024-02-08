@@ -4,7 +4,7 @@ const catchasyncerror=require("../middleware/catchasyncerror");
 const ApiFeatures = require("../utils/apifeatures");
 
 
-exports.createproduct=catchasyncerror(async(req,res,next)=>{
+exports.createproduct=async(req,res,next)=>{
 
 
     const product=await Product.create(req.body);
@@ -13,8 +13,8 @@ exports.createproduct=catchasyncerror(async(req,res,next)=>{
     res.status(201).json({
         success:true,
         product
-    });
-});
+    })
+}
 
 exports.getAllProducts=catchasyncerror(async(req,res)=>{
 

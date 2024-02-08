@@ -29,15 +29,15 @@ const userSchema=new mongoose.Schema({
             required:true
         },
         url:{
-            type:string,
+            type:String,
             required:true
         }
     },
     role:{
-        type:string,
+        type:String,
         default:"user"
     },
-    resetPasswordToken:string,
+    resetPasswordToken:String,
     resetPasswordExpire:Date,
 
 });
@@ -59,7 +59,7 @@ userSchema.methods.getJWTToken =function(){
 };
 
 
-user.Schema.methods.comparePassword =async function
+userSchema.methods.comparePassword =async function
 (enteredPassword)
 {
 return await bcrypt.comparePassword(enteredPassword,this.password);
