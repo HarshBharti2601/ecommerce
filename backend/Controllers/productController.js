@@ -1,21 +1,22 @@
-const {Product} = require("../models/productModel");
+const Product = require("../models/productModel");
 const ErrorHandler=require("../utils/errorhandler");
 const catchasyncerror=require("../middleware/catchasyncerror");
 const ApiFeatures = require("../utils/apifeatures");
 const error = require("../middleware/error");
 
 
-exports.createproduct=async(req,res,next)=>{
+exports.createproduct=catchasyncerror(async(req,res,next)=>{
 
 
     const product=await Product.create(req.body);
+    console.log(product)
 
 
     res.status(201).json({
         success:true,
         product
     })
-}
+})
 exports.getAllProducts=catchasyncerror(async(req,res)=>{
 
     const resultPerPage = 5;
@@ -50,20 +51,20 @@ exports.getAllProducts=catchasyncerror(async(req,res)=>{
  }  
 );
 exports.deleteproduct=catchasyncerror(async(req,res,next)=>{
-    const product=await product.findById(req.params.id);
+    const product=await Product.findById(req.params.ids);
 
     if(!product){
         return next(new ErrorHandler("product not found",404));
     }
 
-    await product.remove();
+    await Product.findByIdAndDelete(req.params.ids);
     res.status(200).json({
         success:true,
         message:"Product Deleted successfully" 
     })
 });
 exports.getproduct=catchasyncerror(async(req,res,next)=>{
-    const product=await product.findById(req.params.id);
+    const product=await Product.findById(req.params.ids);
 
     if(!product){
         return next(new ErrorHandler("product not found",404));
@@ -97,10 +98,10 @@ exports.deleteReview = catchasyncerror(async(req,res,next)=>{
         return next(new ErrorHandler("Product not found",404));
     }
 
-    const reviews = product.reviews.filter(rev=>rev._id.toString()!==req.query.id.toString());
+    const reviews = Product.reviews.Filter((rev)=> {return rev._id.toString()!==req.query.id.toString()});
     let sum=0;
     
-         reviews.forEach(rev=>{
+         reviews.forEach((rev)=>{
             sum+=rev.rating; 
             
         })

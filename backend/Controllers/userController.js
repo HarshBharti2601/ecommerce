@@ -71,20 +71,22 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
   
      exports.forgotPassword = catchasyncerror(async(req,res,next)=>{
 
-        const user = await user.findOne({email:req.body.email});
+        const user = await User.findOne({email:req.body.email});
 
         if(!user){
             return next(new ErrorHandler("User not found",404));
         }
+        console.log("hiii");
             const resetToken = user.getResetPasswordToken();
+            console.log("hiii");
 
             await user.save({validateBeforeSave:false});
 
             const resetPasswordUrl =`${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetToken}` ;
 
-            const message=`Your password reset token is :-\n\n ${resetPasswordUrl} \n\n if you have not requested this email
+            const message=`Your password reset url is :-\n\n ${resetPasswordUrl} \n\n if you have not requested this email
             then please ignore it`;
-
+         console.log("hiii");
 
             try {
 
@@ -232,7 +234,7 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
         if(!user){
             return next (new ErrorHandler(`Usser does not exist with id :${req.params.id}`))
         };
-        await user.remove();
+        await User.findByIdAndDelete(req.params.id);
 
         res.status(200).json({
             success:true,

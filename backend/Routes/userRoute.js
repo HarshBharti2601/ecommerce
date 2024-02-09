@@ -11,13 +11,14 @@ const { registeruser,
      loginuser,
      getAllUsers,
      resetPassword,
-     createProductReview
+     createProductReview,
+     deleteUser
      } = require('../Controllers/userController');
 const { isAuthenticatedUser, authorizeroles } = require('../middleware/auth');
 const router=express.Router();
 
 router.route("/register").post(registeruser);
-router.route("/login").post();
+router.route("/login").post(loginuser);
 router.route("/password/forgot").post(forgotPassword);
 
 router.route("/password/reset/:token").put(resetPassword);
@@ -31,7 +32,7 @@ router.route("/me/update").put( isAuthenticatedUser, updateUserProfile);
 
 router.route("/admin/users").get(isAuthenticatedUser,authorizeroles("admin"),getAllUsers);
 
-router.route("/admin/user/:id").get(isAuthenticatedUser,authorizeroles("admin"),getSingleUser).put(isAuthenticatedUser,authorizeroles("admin"),updateUserRole);
+router.route("/admin/user/:id").get(isAuthenticatedUser,authorizeroles("admin"),getSingleUser).put(isAuthenticatedUser,authorizeroles("admin"),updateUserRole).delete(isAuthenticatedUser,authorizeroles("admin"),deleteUser);
 
 router.route("/review").put(isAuthenticatedUser,createProductReview);
 

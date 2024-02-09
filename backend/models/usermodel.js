@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 const validator =require("validator");
-const bcryptjs=require("bcryptjs");
+const bcrypt=require("bcryptjs");
 const jwt=require('jsonwebtoken');
 
 
@@ -71,14 +71,6 @@ userSchema.methods.getResetPasswordToken =function(){
     this.resetPasswordExpire = Date.now() + 15*60*100;
 
     return resetToken;
-
-
-
-
-
-
-
-
 
 };
 

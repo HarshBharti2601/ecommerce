@@ -95,6 +95,7 @@ exports.getAllOrders= catchasyncErrors(async(req,res,next)=>{
 exports.updateOrderstatus = catchasyncErrors(async(req,res,next)=>{
 
   const order = await Order.findById(req.params.id);
+  console.log(order)
 
   if (!order){
 
@@ -107,7 +108,7 @@ exports.updateOrderstatus = catchasyncErrors(async(req,res,next)=>{
   }
 
   order.orderItems.forEach(async (order)=>{
-    await updateStock(order.Product,order.quantity); 
+    await updateStock(order.Product._id,order.quantity); 
   });
 
   order.orderstatus = req.body.status;
