@@ -46,19 +46,29 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
      
      });
 
-     exports.logout =catchasyncerror(async(req,res,next)=>
-      
-       res.cookie("token",null,{
-        expires:new Date(Date.now()),
-        httponly:true
-       })
-     )
+     exports.logout =catchasyncerror(async(req,res,next)=>{
 
-     res.status(200).json({
-        success:true,
-        message:"logged out"
-     });
-       
+        res.cookie("token",null,{
+            expires:new Date(Date.now()),
+            httponly:true
+           })
+
+
+        res.status(200).json({
+            success:true,
+            message:"logged out"
+         });
+
+        
+        }
+         )
+           
+
+   
+      
+     
+
+  
      exports.forgotPassword = catchasyncerror(async(req,res,next)=>{
 
         const user = await user.findOne({email:req.body.email});
@@ -100,35 +110,37 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
 
 
             }
-        exports.resetPassword =catchasyncError(async(req,res,next)=>{
-
-            const resetPasswordToken =crypto.createHash("sha256")
-                   .update(req.params.token)
-                   .digest("hex");
-
-
-
-                   const user= await User.findOne({
-                    resetPasswordToken,
-                    resetPasswordExpire:{$gt :Date.now()},
-                   });
-
-             if(!user){
-                return next(new ErrorHandler("Reset Password Token is Invalid or has been expired",404));
-             } 
-            if (req.body.password!== req.body.confirmPassword){
-                return next(new ErrorHandler ("Password does not match",400));
-            }
-            
-            user.password=req.body.password;
-            user.resetPasswordToken =undefined;
-            user.resetPasswordExpire =undefined;
-
-           await user.save();
-
-           sendToken(user,200,res);
-        })
+       
      });
+
+     exports.resetPassword =catchasyncerror(async(req,res,next)=>{
+
+        const resetPasswordToken =crypto.createHash("sha256")
+               .update(req.params.token)
+               .digest("hex");
+
+
+
+               const user= await User.findOne({
+                resetPasswordToken,
+                resetPasswordExpire:{$gt :Date.now()},
+               });
+
+         if(!user){
+            return next(new ErrorHandler("Reset Password Token is Invalid or has been expired",404));
+         } 
+        if (req.body.password!== req.body.confirmPassword){
+            return next(new ErrorHandler ("Password does not match",400));
+        }
+        
+        user.password=req.body.password;
+        user.resetPasswordToken =undefined;
+        user.resetPasswordExpire =undefined;
+
+       await user.save();
+
+       sendToken(user,200,res);
+    })
      
      exports.getUserDetails = catchasyncerror(async(req,res,next)=>{
 
@@ -286,3 +298,17 @@ exports.loginuser=catchasyncerror(async(req,res,next)=>{
            success:true 
         })
     });
+
+    exports.getAllUsers = catchasyncerror(async (req , res , next)=>{
+
+        const users = await User.find({});
+        if(!users) {
+            return next(ErrorHandler("No users were found" , 400))
+        }
+
+        res.status(200).json({
+            success : true,
+            users
+        })
+
+    })

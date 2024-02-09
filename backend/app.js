@@ -9,6 +9,7 @@ app.use(cookieParser());
 
 const product=require("../backend/Routes/productRouter");
 const user=require("../backend/Routes/userRoute");
+const order = require("./Routes/orderRoute")
 
 app.use("/api/v1",product);
 app.use("/api/v1",user);

@@ -1,8 +1,10 @@
 const express= require("express");
+const router = express.Router();
 
-const newOrder = require("../Controllers/orderController");
+
 
 const {isAuthenticatedUser ,authorizeRoles}= require("../middleware/auth");
+const { newOrder } = require("../Controllers/orderController");
 
 router.route("/order/new").post(isAuthenticatedUser,newOrder);
 
