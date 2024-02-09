@@ -3,7 +3,7 @@ const ErrorHandler=require("../utils/errorhandler");
 
 
 
-module.exports=(req,res,next)=>{
+module.exports=(err , req,res,next)=>{
 
 
     err.statusCode=err.statusCode||500;
